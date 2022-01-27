@@ -193,6 +193,7 @@ static bool is_decipherable_compiled_frame(JavaThread* thread, frame* fr, Compil
     // in found_bad_method_frame() will be triggered. If asserts are disabled,
     // the vframeStreamCommon object will be filled afterwards as if the
     // interpreter were at the point of entering into the method.
+    fprintf(stdout, "===> non-decipherable: %d\n", pc_desc == NULL);
     return false;
   }
 
