@@ -301,6 +301,8 @@ static bool find_initial_Java_frame(JavaThread* thread,
                                     Method** method_p,
                                     int* bci_p) {
 
+  fprintf(stdout, "===> find_initial_Java_frame (stdout)\n");
+  fprintf(stderr, "===> find_initial_Java_frame (stderr)\n");
   // It is possible that for a frame containing a compiled method
   // we can capture the method but no bci. If we get no
   // bci the frame isn't walkable but the method is usable.
