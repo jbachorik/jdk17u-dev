@@ -199,7 +199,7 @@ inline bool vframeStreamCommon::fill_from_frame() {
       }
       fill_from_compiled_frame(decode_offset);
       if (_bci < 0) {
-        fprintf(stderr, "===> fill_from_frame: BCI=%d, flag=%d\n", _bci, flag);
+        fprintf(stdout, "===> fill_from_frame: BCI=%d, flag=%d\n", _bci, flag);
       }
       _vframe_id = 0;
     }
@@ -209,7 +209,7 @@ inline bool vframeStreamCommon::fill_from_frame() {
   // End of stack?
   if (_frame.is_first_frame() || (_stop_at_java_call_stub && _frame.is_entry_frame())) {
     if (_bci < 0) {
-      fprintf(stderr, "===> BCI: %d at and of stack\n", _bci);
+      fprintf(stdout, "===> BCI: %d at and of stack\n", _bci);
     }
     _mode = at_end_mode;
     return true;
