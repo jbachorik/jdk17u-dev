@@ -300,9 +300,6 @@ static bool find_initial_Java_frame(JavaThread* thread,
                                     frame* initial_frame_p,
                                     Method** method_p,
                                     int* bci_p) {
-
-  fprintf(stdout, "===> find_initial_Java_frame (stdout)\n");
-  fprintf(stderr, "===> find_initial_Java_frame (stderr)\n");
   // It is possible that for a frame containing a compiled method
   // we can capture the method but no bci. If we get no
   // bci the frame isn't walkable but the method is usable.
@@ -389,6 +386,7 @@ static bool find_initial_Java_frame(JavaThread* thread,
       // Nevertheless, a Method was found.
 
       if (!is_decipherable_compiled_frame(thread, &candidate, nm)) {
+        fprint(stderr, "===> non decipherable frame found\n");
         return false;
       }
 
@@ -435,9 +433,16 @@ static void forte_fill_call_trace_given_top(JavaThread* thd,
   // Walk the stack starting from 'top_frame' and search for an initial Java frame.
   find_initial_Java_frame(thd, &top_frame, &initial_Java_frame, &method, &bci);
 
+  if (bci == -1) {
+    fprintf(stderr, "===> BCI: -1; method is null: %d\n", method == NULL);
+  }
+
   // Check if a Java Method has been found.
   if (method == NULL) return;
 
+  if (bci == -1) {
+    fprintf(stderr, "===> BCI: -1, method is valid: %d\n", Method::is_valid_method(method));
+  }
   if (!Method::is_valid_method(method)) {
     trace->num_frames = ticks_GC_active; // -2
     return;
@@ -445,8 +450,14 @@ static void forte_fill_call_trace_given_top(JavaThread* thd,
 
   vframeStreamForte st(thd, initial_Java_frame, false);
 
+  if (bci == -1 && st.at_end()) {
+    fprintf(stderr, "===> Empty vframeStreamForte\n");
+  }
   for (; !st.at_end() && count < depth; st.forte_next(), count++) {
     bci = st.bci();
+    if (bci == -1) {
+      fprintf(stderr, "===> BCI -> -1 from vframeStreamForte\n");
+    }
     method = st.method();
 
     if (!Method::is_valid_method(method)) {

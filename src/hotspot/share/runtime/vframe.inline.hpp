@@ -115,6 +115,9 @@ inline void vframeStreamCommon::fill_from_compiled_frame(int decode_offset) {
   _sender_decode_offset = buffer.read_int();
   _method               = buffer.read_method();
   _bci                  = buffer.read_bci();
+  if (_bci == -1) {
+    fprintf(stderr, "===> BCI -> -1 from scopeDesc\n");
+  }
 
   assert(_method->is_method(), "checking type of decoded method");
 }
