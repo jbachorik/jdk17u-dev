@@ -115,9 +115,6 @@ inline void vframeStreamCommon::fill_from_compiled_frame(int decode_offset) {
   _sender_decode_offset = buffer.read_int();
   _method               = buffer.read_method();
   _bci                  = buffer.read_bci();
-  if (_bci == -1) {
-    fprintf(stderr, "===> BCI -> -1 from scopeDesc\n");
-  }
 
   assert(_method->is_method(), "checking type of decoded method");
 }
@@ -142,10 +139,11 @@ inline bool vframeStreamCommon::fill_from_frame() {
 
   // Compiled frame
 
+  int flag = 0;
   if (cb() != NULL && cb()->is_compiled()) {
     if (nm()->is_native_method()) {
+      flag = 1;
       // Do not rely on scopeDesc since the pc might be unprecise due to the _last_native_pc trick.
-      fill_from_compiled_native_frame();
     } else {
       PcDesc* pc_desc = nm()->pc_desc_at(_frame.pc());
       int decode_offset;
@@ -193,11 +191,16 @@ inline bool vframeStreamCommon::fill_from_frame() {
 
           return true;
         }
+        flag = 2;
         decode_offset = DebugInformationRecorder::serialized_null;
       } else {
+        flag = 3;
         decode_offset = pc_desc->scope_decode_offset();
       }
       fill_from_compiled_frame(decode_offset);
+      if (bci == -1) {
+        fprintf(stderr, "===> fill_from_frame: %d\n", flag);
+      }
       _vframe_id = 0;
     }
     return true;
@@ -205,6 +208,9 @@ inline bool vframeStreamCommon::fill_from_frame() {
 
   // End of stack?
   if (_frame.is_first_frame() || (_stop_at_java_call_stub && _frame.is_entry_frame())) {
+    if (bci == -1) {
+      fprintf(stderr, "===> BCI: -1 at and of stack\n");
+    }
     _mode = at_end_mode;
     return true;
   }
