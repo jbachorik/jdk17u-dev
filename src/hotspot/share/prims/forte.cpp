@@ -386,7 +386,7 @@ static bool find_initial_Java_frame(JavaThread* thread,
       // Nevertheless, a Method was found.
 
       if (!is_decipherable_compiled_frame(thread, &candidate, nm)) {
-        fprint(stderr, "===> non decipherable frame found\n");
+        fprintf(stderr, "===> non decipherable frame found\n");
         return false;
       }
 
