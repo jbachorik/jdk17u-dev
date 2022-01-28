@@ -198,7 +198,7 @@ inline bool vframeStreamCommon::fill_from_frame() {
         decode_offset = pc_desc->scope_decode_offset();
       }
       fill_from_compiled_frame(decode_offset);
-      if (bci == -1) {
+      if (_bci == -1) {
         fprintf(stderr, "===> fill_from_frame: %d\n", flag);
       }
       _vframe_id = 0;
@@ -208,7 +208,7 @@ inline bool vframeStreamCommon::fill_from_frame() {
 
   // End of stack?
   if (_frame.is_first_frame() || (_stop_at_java_call_stub && _frame.is_entry_frame())) {
-    if (bci == -1) {
+    if (_bci == -1) {
       fprintf(stderr, "===> BCI: -1 at and of stack\n");
     }
     _mode = at_end_mode;
